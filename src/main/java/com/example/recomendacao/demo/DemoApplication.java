@@ -1,11 +1,15 @@
 package com.example.recomendacao.demo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.example.recomendacao.demo.model.DadosEpisodio;
 import com.example.recomendacao.demo.model.DadosSerie;
+import com.example.recomendacao.demo.model.DadosTemporada;
 import com.example.recomendacao.demo.service.ConsumoApi;
 import com.example.recomendacao.demo.service.ConverteDados;
 
@@ -29,5 +33,14 @@ public class DemoApplication implements CommandLineRunner {
 		json = consumoApi.obterDados("https://omdbapi.com/?t=gilmore+girls&season=1&episode=2&apikey=9f32a5d0");
 		DadosEpisodio dadosEpisodio = conversor.obterDados(json, DadosEpisodio.class);
 		System.out.println(dadosEpisodio);
+
+		List<DadosTemporada> temporadas = new ArrayList<>();
+
+		for(int i = 1; i <= dados.totalTemporadas(); i++) {
+			json = consumoApi.obterDados("https://www.omdbapi.com/?t=gilmore+girls&season=" + i + "&apikey=6585022c");
+			DadosTemporada dadosTemporada = conversor.obterDados(json, DadosTemporada.class);
+			temporadas.add(dadosTemporada);
+		}
+		temporadas.forEach(System.out::println);		
 	}
 }
