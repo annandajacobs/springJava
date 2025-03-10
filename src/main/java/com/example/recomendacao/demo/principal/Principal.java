@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.example.recomendacao.demo.model.DadosEpisodio;
 import com.example.recomendacao.demo.model.DadosSerie;
 import com.example.recomendacao.demo.model.DadosTemporada;
 import com.example.recomendacao.demo.service.ConsumoApi;
@@ -31,6 +32,16 @@ public class Principal {
 			DadosTemporada dadosTemporada = conversor.obterDados(json, DadosTemporada.class);
 			temporadas.add(dadosTemporada);
 		}
-		temporadas.forEach(System.out::println);	
+		temporadas.forEach(System.out::println);
+
+        // for(int i = 0; i < serie.totalTemporadas(); i++){
+        //     List<DadosEpisodio> episodiosTemporadas = temporadas.get(i).episodios();
+        //     for(int j = 0; j < episodiosTemporadas.size(); j++){
+        //         System.out.println(episodiosTemporadas.get(j).titulo());
+        //     }
+        // }
+
+        temporadas.forEach(t -> t.episodios().forEach(e -> System.out.println(e.titulo()))); //lambda
+        temporadas.forEach(System.out::println);
     }
 }
