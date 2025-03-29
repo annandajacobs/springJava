@@ -1,12 +1,18 @@
 package com.example.recomendacao.demo.principal;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.example.recomendacao.demo.model.DadosEpisodio;
 import com.example.recomendacao.demo.model.DadosSerie;
 import com.example.recomendacao.demo.model.DadosTemporada;
+import com.example.recomendacao.demo.model.Episodio;
 import com.example.recomendacao.demo.service.ConsumoApi;
 import com.example.recomendacao.demo.service.ConverteDados;
 
@@ -43,5 +49,33 @@ public class Principal {
 
         temporadas.forEach(t -> t.episodios().forEach(e -> System.out.println(e.titulo()))); //lambda
         temporadas.forEach(System.out::println);
+        
+        List<Episodio> episodios = temporadas.stream()
+            .flatMap(t -> t.episodios().stream()
+                    .map(d -> new Episodio(t.numeroTemporada(), d))
+            ).collect(Collectors.toList());
+        
+        episodios.forEach(System.out::println);
+
+        System.out.println("\nTOP 5 EPISODIOS");
+        episodios.stream()
+            .sorted(Comparator.comparing(Episodio::getAvaliacao).reversed())
+            .limit(5)
+            .forEach(System.out::println);
+    
+        System.out.println("\nA partir de que ano você deseja ver os epsódios? ");
+        var ano = leitura.nextInt();
+        leitura.nextLine();
+
+        LocalDate dataBusca = LocalDate.of(ano, 1, 1);
+
+        DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        episodios.stream()
+            .filter(e -> e.getDataLancamento() != null & e.getDataLancamento().isAfter(dataBusca))
+            .forEach(e -> System.out.println(
+                "Temporada: " + e.getTemporada() + 
+                " Episódio: " + e.getTitulo() +
+                " Data Lançamento: " + e.getDataLancamento().format(formatador)
+            ));
     }
 }
