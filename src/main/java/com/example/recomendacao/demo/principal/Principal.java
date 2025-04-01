@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -71,11 +72,24 @@ public class Principal {
 
         DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         episodios.stream()
-            .filter(e -> e.getDataLancamento() != null & e.getDataLancamento().isAfter(dataBusca))
+            .filter(e -> e.getDataLancamento() != null && e.getDataLancamento().isAfter(dataBusca))
             .forEach(e -> System.out.println(
                 "Temporada: " + e.getTemporada() + 
                 " Episódio: " + e.getTitulo() +
                 " Data Lançamento: " + e.getDataLancamento().format(formatador)
             ));
+
+        System.out.println("\nDigite um trecho do título do episódio: ");
+        var trechoTitulo = leitura.nextLine();
+        Optional<Episodio> episodioBuscado = episodios.stream()
+                .filter(e -> e.getTitulo().toUpperCase().contains(trechoTitulo.toUpperCase()))
+                .findFirst();
+        if(episodioBuscado.isPresent()){
+            System.out.println("Episódio encontrado!");
+            System.out.println("Temporada: " + episodioBuscado.get().getTemporada());
+        } else {
+            System.out.println("Episódio não encontrado!");
+        }
+
     }
 }
